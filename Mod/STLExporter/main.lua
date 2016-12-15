@@ -12,7 +12,8 @@ exporter:Export("test/default.bmax",nil,true);
 ------------------------------------------------------------
 ]]
 local CmdParser = commonlib.gettable("MyCompany.Aries.Game.CmdParser");	
-
+NPL.load("(gl)script/ide/System/Encoding/base64.lua");
+local Encoding = commonlib.gettable("System.Encoding");
 local STLExporter = commonlib.inherit(commonlib.gettable("Mod.ModBase"),commonlib.gettable("Mod.STLExporter"));
 
 function STLExporter:ctor()
@@ -65,7 +66,7 @@ function STLExporter:RegisterExporter()
 	end);
 end
 
-function STLExporter:RegisterCommand()
+function STLExporter:RegisterCommand2()
 	local Commands = commonlib.gettable("MyCompany.Aries.Game.Commands");
 	Commands["stlexporter"] = {
 		name="stlexporter", 
@@ -87,8 +88,43 @@ function STLExporter:RegisterCommand()
 		end,
 	};
 end
-
+function STLExporter:RegisterCommand()
+	local Commands = commonlib.gettable("MyCompany.Aries.Game.Commands");
+	Commands["stlexporter"] = {
+		name="stlexporter", 
+		quick_ref="/stlexporter [-b|binary] [-native|cpp] [filename] [unit_value] [bUpload]", 
+		desc=[[export a bmax file or current selection to stl file
+@param -b: export as binary STL file
+@param -native: use C++ exporter, instead of NPL.
+/stlexporter test.stl			export current selection to test.stl file
+/stlexporter -b test.bmax		convert test.bmax file to test.stl file
+]], 
+		handler = function(cmd_name, cmd_text, cmd_params, fromEntity)
+			local file_name, options;
+			options, cmd_text = CmdParser.ParseOptions(cmd_text);
+			file_name,cmd_text = CmdParser.ParseString(cmd_text);
+			unit_value,cmd_text = CmdParser.ParseString(cmd_text);
+			bUpload,cmd_text = CmdParser.ParseBool(cmd_text);
+			unit_value = tonumber(unit_value)
+			local save_as_binary = options.b~=nil or options.binary~=nil;
+			local use_cpp_native = options.native~=nil or options.cpp~=nil;
+			self:Export(file_name,nil, save_as_binary, use_cpp_native,unit_value,bUpload);
+		end,
+	};
+end
 function STLExporter:OnClickExport()
+	NPL.load("(gl)Mod/STLExporter/SaveSTLDialog.lua");
+	local SaveSTLDialog = commonlib.gettable("Mod.STLExporter.SaveSTLDialog");
+	SaveSTLDialog.ShowPage("please enter STL file name", function(result)
+		if(result and result.filename and result.filename ~= "") then
+			STLExporter.last_filename = result.filename;
+			local filename = GameLogic.GetWorldDirectory()..result.filename;
+			LOG.std(nil, "info", "STLExporter", "exporting to %s", filename);
+			GameLogic.RunCommand("stlexporter", string.format("%s %f %s",filename,result.unit,tostring(result.bUpload)));
+		end
+	end, STLExporter.last_filename or "test", nil, "stl");
+end
+function STLExporter:OnClickExport2()
 	NPL.load("(gl)script/apps/Aries/Creator/Game/GUI/SaveFileDialog.lua");
 	local SaveFileDialog = commonlib.gettable("MyCompany.Aries.Game.GUI.SaveFileDialog");
 	SaveFileDialog.ShowPage("please enter STL file name", function(result)
@@ -106,7 +142,10 @@ end
 -- @param output_file_name: this should be nil, unless you explicitly specify an output name. 
 -- @param -binary: export as binary STL file
 -- @param -native: use C++ exporter, instead of NPL.
-function STLExporter:Export(input_file_name,output_file_name,binary,native)
+-- @param unit_value:1 block = unit_value(um,mm,cm,in,ft,m) only valid in NPL exporter now.
+-- @param bUpload:if bUpload = ture, it will upload stl file to "www.geekrit.com/api/file/upload3DFile"
+--        details info please see:https://github.com/LiXizhi/STLExporter/wiki/3DPrintingAPI
+function STLExporter:Export(input_file_name,output_file_name,binary,native,unit_value,bUpload)
 	input_file_name = input_file_name or "default.stl";
 	binary = binary == true;
 
@@ -134,6 +173,7 @@ function STLExporter:Export(input_file_name,output_file_name,binary,native)
 		local STLWriter = commonlib.gettable("Mod.STLExporter.STLWriter");
 
 		local model = BMaxModel:new();
+		model:SetUnit(unit_value);
 		if(extension == "bmax") then
 			model:Load(input_file_name);
 		else
@@ -154,6 +194,9 @@ function STLExporter:Export(input_file_name,output_file_name,binary,native)
 		else
 			res = writer:SaveAsText(output_file_name);
 		end
+		if(bUpload)then
+			STLExporter:Upload(output_file_name);
+		end
 	end
 	if(res)then
 		_guihelper.MessageBox(format("Successfully saved STL file to :%s, do you want to open it?", commonlib.Encoding.DefaultToUtf8(output_file_name)), function(res)
@@ -162,4 +205,27 @@ function STLExporter:Export(input_file_name,output_file_name,binary,native)
 			end
 		end, _guihelper.MessageBoxButtons.YesNo);
 	end
+end
+function STLExporter:Upload(filename)
+	if(not ParaIO.DoesFileExist(filename))then
+		return
+	end
+	local file = ParaIO.open(filename, "r");
+	if(file:IsValid()) then
+		local stl_data = file:GetText(0,-1);
+		commonlib.echo("===========stl_data");
+		commonlib.echo(stl_data);
+		file:close();
+		local url = "http://www.geekrit.com/api/file/upload3DFile"
+		System.os.GetUrl({url = url, form={file={file="test.html", data=stl_data, type="text/stl"}} }, 
+		function(err, msg, data)		
+			echo("=============err")	
+			echo(err)	
+			echo("=============msg")	
+			echo(msg)	
+			echo("============data")	
+			echo(data)	
+		end);
+	end
+	
 end

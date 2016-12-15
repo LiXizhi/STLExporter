@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Mod">
+      <UniqueIdentifier>{dda1c20a-dbcb-4d8b-8d2d-cd0cb24750b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mod\STLExporter">
+      <UniqueIdentifier>{12c32a79-83da-4e68-b0bf-d24c938d9f12}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Mod\STLExporter\BlockCommon.lua">
+      <Filter>Mod\STLExporter</Filter>
+    </None>
+    <None Include="Mod\STLExporter\BlockModel.lua">
+      <Filter>Mod\STLExporter</Filter>
+    </None>
+    <None Include="Mod\STLExporter\BMaxModel.lua">
+      <Filter>Mod\STLExporter</Filter>
+    </None>
+    <None Include="Mod\STLExporter\BMaxNode.lua">
+      <Filter>Mod\STLExporter</Filter>
+    </None>
+    <None Include="Mod\STLExporter\main.lua">
+      <Filter>Mod\STLExporter</Filter>
+    </None>
+    <None Include="Mod\STLExporter\STLWriter.lua">
+      <Filter>Mod\STLExporter</Filter>
+    </None>
+    <None Include="Mod\STLExporter\SaveSTLDialog.html">
+      <Filter>Mod\STLExporter</Filter>
+    </None>
+    <None Include="Mod\STLExporter\SaveSTLDialog.lua">
+      <Filter>Mod\STLExporter</Filter>
+    </None>
+  </ItemGroup>
+</Project>
