@@ -217,7 +217,9 @@ function STLExporter:Upload(filename)
 		commonlib.echo(stl_data);
 		file:close();
 		local url = "http://www.geekrit.com/api/file/upload3DFile"
-		local params = {url = url, form = { file = filename, data = stl_data, type = "text/stl"}, };
+		local params = {	url = url, 
+							file = { name = filename, contents = stl_data, type = "text/stl"},
+						}
 		commonlib.echo("==============params");
 		commonlib.echo(params);
 		System.os.GetUrl(params, 
