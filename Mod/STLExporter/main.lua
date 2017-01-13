@@ -213,12 +213,11 @@ function STLExporter:Upload(filename)
 	local file = ParaIO.open(filename, "r");
 	if(file:IsValid()) then
 		local stl_data = file:GetText(0,-1);
-		commonlib.echo("===========stl_data");
-		commonlib.echo(stl_data);
 		file:close();
 		local url = "http://www.geekrit.com/api/file/upload3DFile"
-		local params = {	url = url, 
-							file = { name = filename, contents = stl_data, type = "text/stl"},
+		local params = {	url = url,
+		                   headers = {Referer = "http://www.geekrit.com/client/upload3D"},
+							form = {file = { file="test.stl", type = "text/stl", data = stl_data}},
 						}
 		commonlib.echo("==============params");
 		commonlib.echo(params);
@@ -232,5 +231,5 @@ function STLExporter:Upload(filename)
 			echo(data)	
 		end);
 	end
-	
+
 end
