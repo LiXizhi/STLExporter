@@ -55,7 +55,7 @@ end
 -- add plugin integration points with the IDE
 function STLExporter:RegisterExporter()
 	GameLogic.GetFilters():add_filter("GetExporters", function(exporters)
-		exporters[#exporters+1] = {id="STL", title="STL exporter", desc="export stl files for 3d printing"}
+		exporters[#exporters+1] = {id="STL", title=L"导出STL", desc=L"导出STL文件,方便3D打印"}
 		return exporters;
 	end);
 
