@@ -13,7 +13,9 @@ exporter:Export("test/default.bmax",nil,true);
 ]]
 local CmdParser = commonlib.gettable("MyCompany.Aries.Game.CmdParser");	
 NPL.load("(gl)script/ide/System/Encoding/base64.lua");
+NPL.load("(gl)script/ide/TooltipHelper.lua");
 local Encoding = commonlib.gettable("System.Encoding");
+local BroadcastHelper = commonlib.gettable("CommonCtrl.BroadcastHelper");
 local STLExporter = commonlib.inherit(commonlib.gettable("Mod.ModBase"),commonlib.gettable("Mod.STLExporter"));
 
 function STLExporter:ctor()
@@ -115,24 +117,12 @@ end
 function STLExporter:OnClickExport()
 	NPL.load("(gl)Mod/STLExporter/SaveSTLDialog.lua");
 	local SaveSTLDialog = commonlib.gettable("Mod.STLExporter.SaveSTLDialog");
-	SaveSTLDialog.ShowPage("please enter STL file name", function(result)
+	SaveSTLDialog.ShowPage(L"请输入文件名:", function(result)
 		if(result and result.filename and result.filename ~= "") then
 			STLExporter.last_filename = result.filename;
 			local filename = GameLogic.GetWorldDirectory()..result.filename;
 			LOG.std(nil, "info", "STLExporter", "exporting to %s", filename);
 			GameLogic.RunCommand("stlexporter", string.format("%s %f %s",filename,result.unit,tostring(result.bUpload)));
-		end
-	end, STLExporter.last_filename or "test", nil, "stl");
-end
-function STLExporter:OnClickExport2()
-	NPL.load("(gl)script/apps/Aries/Creator/Game/GUI/SaveFileDialog.lua");
-	local SaveFileDialog = commonlib.gettable("MyCompany.Aries.Game.GUI.SaveFileDialog");
-	SaveFileDialog.ShowPage("please enter STL file name", function(result)
-		if(result and result~="") then
-			STLExporter.last_filename = result;
-			local filename = GameLogic.GetWorldDirectory()..result;
-			LOG.std(nil, "info", "STLExporter", "exporting to %s", filename);
-			GameLogic.RunCommand("stlexporter", filename);
 		end
 	end, STLExporter.last_filename or "test", nil, "stl");
 end
@@ -200,7 +190,7 @@ function STLExporter:Export(input_file_name,output_file_name,binary,native,unit_
 		end
 	end
 	if(res)then
-		_guihelper.MessageBox(format("Successfully saved STL file to :%s, do you want to open it?", commonlib.Encoding.DefaultToUtf8(output_file_name)), function(res)
+		_guihelper.MessageBox(format(L"文件成功保存在%s,现在打开吗?", commonlib.Encoding.DefaultToUtf8(output_file_name)), function(res)
 			if(res and res == _guihelper.DialogResult.Yes) then
 				ParaGlobal.ShellExecute("open", ParaIO.GetCurDirectory(0)..output_file_name, "", "", 1);
 			end
@@ -220,6 +210,7 @@ function STLExporter:Upload(filename)
 		                   headers = {Referer = "http://3dprint.idreamtech.com.cn/client/upload3D"},
 							form = {file = { file="test.stl", type = "text/stl", data = stl_data}},
 						}
+		BroadcastHelper.PushLabel({id="UplaodSTL", label = L"上传中,请稍等......", max_duration=5000, color = "0 255 0", scaling=1.1, bold=true, shadow=true,});
 		LOG.std(nil, "info", "STLExporter upload stl params", params);
 		System.os.GetUrl(params, 
 		function(err, msg, data)		
@@ -230,9 +221,8 @@ function STLExporter:Upload(filename)
 				local s = string.format("http://3dprint.idreamtech.com.cn/client/upload3D?fileId=%s",tostring(data.data.file_id));
 				ParaGlobal.ShellExecute("open", "iexplore.exe", s, "", 1);
 			else
-				NPL.load("(gl)script/ide/TooltipHelper.lua");
-				local BroadcastHelper = commonlib.gettable("CommonCtrl.BroadcastHelper");
-				BroadcastHelper.PushLabel({id="UplaodSTL", label = L"上传stl文件失败。", max_duration=5000, color = "255 0 0", scaling=1.1, bold=true, shadow=true,});
+				
+				BroadcastHelper.PushLabel({id="UplaodSTL", label = L"上传stl文件失败.", max_duration=5000, color = "255 0 0", scaling=1.1, bold=true, shadow=true,});
 
 			end
 		end);
