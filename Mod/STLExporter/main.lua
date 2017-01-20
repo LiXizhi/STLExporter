@@ -196,6 +196,7 @@ function STLExporter:Export(input_file_name,output_file_name,binary,native,unit_
 		end
 		if(bUpload)then
 			STLExporter:Upload(output_file_name);
+			return
 		end
 	end
 	if(res)then
@@ -214,21 +215,26 @@ function STLExporter:Upload(filename)
 	if(file:IsValid()) then
 		local stl_data = file:GetText(0,-1);
 		file:close();
-		local url = "http://www.geekrit.com/api/file/upload3DFile"
+		local url = "http://3dprint.idreamtech.com.cn/api/file/upload3DFile"
 		local params = {	url = url,
-		                   headers = {Referer = "http://www.geekrit.com/client/upload3D"},
+		                   headers = {Referer = "http://3dprint.idreamtech.com.cn/client/upload3D"},
 							form = {file = { file="test.stl", type = "text/stl", data = stl_data}},
 						}
-		commonlib.echo("==============params");
-		commonlib.echo(params);
+		LOG.std(nil, "info", "STLExporter upload stl params", params);
 		System.os.GetUrl(params, 
 		function(err, msg, data)		
-			echo("=============err")	
-			echo(err)	
-			echo("=============msg")	
-			echo(msg)	
-			echo("============data")	
-			echo(data)	
+			LOG.std(nil, "info", "STLExporter err", err);
+			LOG.std(nil, "info", "STLExporter msg", msg);
+			LOG.std(nil, "info", "STLExporter data", data);
+			if(data and data.data and data.data.file_id)then
+				local s = string.format("http://3dprint.idreamtech.com.cn/client/upload3D?fileId=%s",tostring(data.data.file_id));
+				ParaGlobal.ShellExecute("open", "iexplore.exe", s, "", 1);
+			else
+				NPL.load("(gl)script/ide/TooltipHelper.lua");
+				local BroadcastHelper = commonlib.gettable("CommonCtrl.BroadcastHelper");
+				BroadcastHelper.PushLabel({id="UplaodSTL", label = L"上传stl文件失败。", max_duration=5000, color = "255 0 0", scaling=1.1, bold=true, shadow=true,});
+
+			end
 		end);
 	end
 
