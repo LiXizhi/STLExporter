@@ -207,8 +207,11 @@ function STLExporter:Upload(filename)
 		file:close();
 		local url = "http://3dprint.idreamtech.com.cn/api/file/upload3DFile"
 		local params = {	url = url,
-		                   headers = {Referer = "http://3dprint.idreamtech.com.cn/client/upload3D"},
-							form = {file = { file="test.stl", type = "text/stl", data = stl_data}},
+							headers = { 
+								Referer = "http://3dprint.idreamtech.com.cn/client/upload3D" ,
+								Expect = "",
+							},
+							form = { file = { file="test.stl", type = "text/stl", data = stl_data } },
 						}
 		BroadcastHelper.PushLabel({id="UplaodSTL", label = L"上传中,请稍等......", max_duration=5000, color = "0 255 0", scaling=1.1, bold=true, shadow=true,});
 		LOG.std(nil, "info", "STLExporter upload stl params", params);
@@ -221,9 +224,7 @@ function STLExporter:Upload(filename)
 				local s = string.format("http://3dprint.idreamtech.com.cn/client/upload3D?fileId=%s",tostring(data.data.file_id));
 				ParaGlobal.ShellExecute("open", "iexplore.exe", s, "", 1);
 			else
-				
 				BroadcastHelper.PushLabel({id="UplaodSTL", label = L"上传stl文件失败.", max_duration=5000, color = "255 0 0", scaling=1.1, bold=true, shadow=true,});
-
 			end
 		end);
 	end
