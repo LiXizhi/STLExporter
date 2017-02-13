@@ -211,7 +211,7 @@ function STLExporter:Upload(filename)
 								Referer = "http://3dprint.idreamtech.com.cn/client/upload3D" ,
 								Expect = "",
 							},
-							form = { file = { file="test.stl", type = "text/stl", data = stl_data } },
+							form = { file = { file=filename, type = "text/stl", data = stl_data } },
 						}
 		BroadcastHelper.PushLabel({id="UplaodSTL", label = L"上传中,请稍等......", max_duration=5000, color = "0 255 0", scaling=1.1, bold=true, shadow=true,});
 		LOG.std(nil, "info", "STLExporter upload stl params", params);
