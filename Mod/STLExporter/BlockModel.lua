@@ -16,8 +16,14 @@ local BlockModel = commonlib.inherit(nil,commonlib.gettable("Mod.STLExporter.Blo
 
 function BlockModel:ctor()
 	self.m_vertices = {};
+    self.tag = nil;
 end
-
+function BlockModel:SetTag(tag)
+    self.tag = tag;
+end
+function BlockModel:GetTag()
+    return self.tag;
+end
 -- init the model as a cube
 function BlockModel:InitCube()
 	self:MakeCube();

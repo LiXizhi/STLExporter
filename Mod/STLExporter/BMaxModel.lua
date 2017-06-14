@@ -211,6 +211,8 @@ function BMaxModel:TessellateBlock(x,y,z)
 			cube:AddFace(temp_cube, face);
 		end
 	end
+
+    cube:SetTag(node);
 	return cube;
 end
 
