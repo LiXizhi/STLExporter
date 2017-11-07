@@ -12,6 +12,7 @@ model:Load(filename)
 model:LoadFromBlocks(blocks)
 ------------------------------------------------------------
 ]]
+NPL.load("(gl)script/ide/mathlib.lua");
 NPL.load("(gl)script/ide/XPath.lua");
 NPL.load("(gl)script/ide/math/ShapeAABB.lua");
 NPL.load("(gl)Mod/STLExporter/BMaxNode.lua");
