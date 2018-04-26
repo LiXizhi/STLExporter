@@ -205,10 +205,11 @@ function STLExporter:Upload(filename)
 	if(file:IsValid()) then
 		local stl_data = file:GetText(0,-1);
 		file:close();
-		local url = "http://3dprint.idreamtech.com.cn/api/file/upload3DFile"
+		local base_url = "http://share.tatfook.com";
+		local url = base_url.."/api/file/upload3DFile"
 		local params = {	url = url,
 							headers = { 
-								Referer = "http://3dprint.idreamtech.com.cn/client/upload3D" ,
+								Referer = base_url.."/client/upload3D" ,
 								Expect = "",
 							},
 							form = { file = { file=filename, type = "text/stl", data = stl_data } },
@@ -221,7 +222,7 @@ function STLExporter:Upload(filename)
 			LOG.std(nil, "info", "STLExporter msg", msg);
 			LOG.std(nil, "info", "STLExporter data", data);
 			if(data and data.data and data.data.file_id)then
-				local s = string.format("http://3dprint.idreamtech.com.cn/client/upload3D?fileId=%s",tostring(data.data.file_id));
+				local s = string.format(base_url.."/client/upload3D?fileId=%s",tostring(data.data.file_id));
 				ParaGlobal.ShellExecute("open", "iexplore.exe", s, "", 1);
 			else
 				BroadcastHelper.PushLabel({id="UplaodSTL", label = L"上传stl文件失败.", max_duration=5000, color = "255 0 0", scaling=1.1, bold=true, shadow=true,});
