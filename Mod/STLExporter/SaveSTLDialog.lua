@@ -119,6 +119,8 @@ end
 function SaveSTLDialog.OnUpload()
 	SaveSTLDialog.OnSave(1,true)
 end
+
+-- @return filename
 function SaveSTLDialog.OnSave(unit, bUpload)
 	if(page) then
 		unit = unit or 1;
@@ -140,6 +142,7 @@ function SaveSTLDialog.OnSave(unit, bUpload)
 			bUpload = bUpload,
 		}
 		page:CloseWindow();
+		return filename;
 	end
 end
 
@@ -160,4 +163,11 @@ end
 
 function SaveSTLDialog.GetText()
 	return SaveSTLDialog.text or L"请输入:";
+end
+
+function SaveSTLDialog.OnImportToCadBlock()
+	local filename = SaveSTLDialog.OnSave(1,false)
+	if(filename) then
+		GameLogic.RunCommand("take", format("NPLCADCodeBlock {nplCode=\"importStl('%s')\"}", filename))
+	end
 end

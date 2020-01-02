@@ -19,7 +19,7 @@ function GetUnits()
 end
 ]]></script>
 <aries:window mode="thin" title='<%=L"输入窗"%>' style="width:400px;" onclose="OnClose">
-<div style="margin:10px;">
+<div style="margin:10px;margin-bottom:20px;">
     <div style="color:#ffffff;margin:5px;">
         <%=SaveSTLDialog.GetText()%>
     </div>
@@ -36,8 +36,9 @@ end
             <div style="float:left;margin-left:2px">units(um,mm,cm,in,ft,m)</div>
         </div>-->
         <div style="float:left">
-            <input type="button" name="OK" DefaultButton="true" style="margin-left:210px;min-width:70px;" class="mc_light_grey_button_with_fillet" onclick="SaveSTLDialog.OnUpload" value='<%=L"3D打印"%>'/>
-            <input type="button" name="OK" DefaultButton="true" style="margin-left:10px;min-width:70px;" class="mc_light_grey_button_with_fillet" onclick="SaveSTLDialog.OnOK" value='<%=L"保存"%>'/>
+            <!-- <input type="button" name="OK" DefaultButton="true" style="margin-left:210px;min-width:70px;" class="mc_light_grey_button_with_fillet" onclick="SaveSTLDialog.OnUpload" value='<%=L"3D打印"%>'/> -->
+            <!-- <input type="button" name="OK" DefaultButton="true" style="margin-left:180px;min-width:100px;" class="mc_light_grey_button_with_fillet" onclick="SaveSTLDialog.OnImportToCadBlock" value='<%=L"导入CAD方块"%>'/> -->
+            <input type="button" name="OK" DefaultButton="true" style="min-width:70px;margin-right:10px" align="right" class="mc_light_grey_button_with_fillet" onclick="SaveSTLDialog.OnOK" value='<%=L"保存"%>'/>
         </div>
         
     </div>

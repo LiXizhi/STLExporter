@@ -15,6 +15,7 @@ local CmdParser = commonlib.gettable("MyCompany.Aries.Game.CmdParser");
 NPL.load("(gl)script/ide/System/Encoding/base64.lua");
 NPL.load("(gl)script/ide/TooltipHelper.lua");
 local Encoding = commonlib.gettable("System.Encoding");
+local Files = commonlib.gettable("MyCompany.Aries.Game.Common.Files");
 local BroadcastHelper = commonlib.gettable("CommonCtrl.BroadcastHelper");
 local STLExporter = commonlib.inherit(commonlib.gettable("Mod.ModBase"),commonlib.gettable("Mod.STLExporter"));
 
@@ -190,7 +191,9 @@ function STLExporter:Export(input_file_name,output_file_name,binary,native,unit_
 		end
 	end
 	if(res)then
-		_guihelper.MessageBox(format(L"文件成功保存在%s,现在打开吗?", commonlib.Encoding.DefaultToUtf8(output_file_name)), function(res)
+		local filename = commonlib.Encoding.DefaultToUtf8(output_file_name);
+		GameLogic.RunCommand("take", format("NPLCADCodeBlock {nplCode=\"importStl('union','%s','#ff0000')\"}", Files.GetRelativePath(filename)))
+		_guihelper.MessageBox(format(L"文件成功保存在%s,现在打开吗?", filename), function(res)
 			if(res and res == _guihelper.DialogResult.Yes) then
 				ParaGlobal.ShellExecute("open", ParaIO.GetCurDirectory(0)..output_file_name, "", "", 1);
 			end
