@@ -191,13 +191,8 @@ function STLExporter:Export(input_file_name,output_file_name,binary,native,unit_
 		end
 	end
 	if(res)then
-		local filename = commonlib.Encoding.DefaultToUtf8(output_file_name);
-		GameLogic.RunCommand("take", format("NPLCADCodeBlock {nplCode=\"importStl('union','%s','#ff0000')\"}", Files.GetRelativePath(filename)))
-		_guihelper.MessageBox(format(L"文件成功保存在%s,现在打开吗?", filename), function(res)
-			if(res and res == _guihelper.DialogResult.Yes) then
-				ParaGlobal.ShellExecute("open", ParaIO.GetCurDirectory(0)..output_file_name, "", "", 1);
-			end
-		end, _guihelper.MessageBoxButtons.YesNo);
+		GameLogic.GetFilters():apply_filters("file_exported", "STL", output_file_name);
+		GameLogic.GetFilters():apply_filters("user_event_stat", "model", "export.stl", 10, nil);
 	end
 end
 function STLExporter:Upload(filename)
