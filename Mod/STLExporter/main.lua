@@ -212,7 +212,7 @@ function STLExporter:Upload(filename)
 							},
 							form = { file = { file=filename, type = "text/stl", data = stl_data } },
 						}
-		BroadcastHelper.PushLabel({id="UplaodSTL", label = L"上传中,请稍等......", max_duration=5000, color = "0 255 0", scaling=1.1, bold=true, shadow=true,});
+		BroadcastHelper.PushLabel({id="UploadSTL", label = L"上传中,请稍等......", max_duration=5000, color = "0 255 0", scaling=1.1, bold=true, shadow=true,});
 		LOG.std(nil, "info", "STLExporter upload stl params", params);
 		System.os.GetUrl(params, 
 		function(err, msg, data)		
@@ -223,7 +223,7 @@ function STLExporter:Upload(filename)
 				local s = string.format(base_url.."/client/upload3D?fileId=%s",tostring(data.data.file_id));
 				ParaGlobal.ShellExecute("open", "iexplore.exe", s, "", 1);
 			else
-				BroadcastHelper.PushLabel({id="UplaodSTL", label = L"上传stl文件失败.", max_duration=5000, color = "255 0 0", scaling=1.1, bold=true, shadow=true,});
+				BroadcastHelper.PushLabel({id="UploadSTL", label = L"上传stl文件失败.", max_duration=5000, color = "255 0 0", scaling=1.1, bold=true, shadow=true,});
 			end
 		end);
 	end
